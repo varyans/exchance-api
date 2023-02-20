@@ -12,8 +12,6 @@ public class RateResponseConverter implements Converter<RateResponse, RateEntity
         rateEntity.setRates(source.rates());
         rateEntity.setDate(source.date());
         rateEntity.setBase(source.base());
-
-
-        return null;
+        return rateEntity;
     }
 }
