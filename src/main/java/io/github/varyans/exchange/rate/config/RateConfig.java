@@ -12,6 +12,7 @@ public class RateConfig {
 
     @Bean(name = "rateRestTemplate")
     public RestTemplate getRateRestTemplate(@Autowired @Value("${exchange.rates.api.key}") String apiKey) {
+        //TODO: do not forget to add timeouts
         return new RestTemplateBuilder()
                 .defaultHeader("apiKey",apiKey)
                 .build();
