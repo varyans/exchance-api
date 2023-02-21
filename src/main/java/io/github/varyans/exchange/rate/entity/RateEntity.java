@@ -1,5 +1,6 @@
 package io.github.varyans.exchange.rate.entity;
 
+import io.github.varyans.exchange.rate.enumaration.EnumCurrency;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -20,13 +21,16 @@ public class RateEntity implements Serializable {
     @Id
     @GeneratedValue
     private Long id;
-    private String base;
+
+    @Enumerated(EnumType.STRING)
+    private EnumCurrency base;
     private LocalDate date;
 
     @ElementCollection
     @CollectionTable(name = "rate_mapping",
             joinColumns = {@JoinColumn(name = "rate_id", referencedColumnName = "id")})
     @MapKeyColumn(name = "currency")
+    @MapKeyEnumerated(EnumType.STRING)
     @Column(name = "rate")
-    private Map<String, Double> rates;
+    private Map<EnumCurrency, Double> rates;
 }

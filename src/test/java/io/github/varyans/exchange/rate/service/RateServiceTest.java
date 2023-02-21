@@ -1,5 +1,6 @@
 package io.github.varyans.exchange.rate.service;
 
+import io.github.varyans.exchange.rate.enumaration.EnumCurrency;
 import jakarta.transaction.Transactional;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -19,16 +20,19 @@ class RateServiceTest {
 
     @Test
     @Sql("/sql_20_02_23.sql")
-    void name() {
+    void baseUSDwithMultipleTargets_success() {
         LocalDate date = LocalDate.of(2023, 2, 20);
-        List<Rate> rates = List.of(new Rate("USD", 1.0),
-                new Rate("TRY",18.86531),
-                new Rate("EUR",0.93576)
+        List<Rate> rates = List.of(new Rate(EnumCurrency.USD, 1.0),
+                new Rate(EnumCurrency.TRY,18.86531),
+                new Rate(EnumCurrency.EUR,0.93576)
                 );
-        RateDTO expected = new RateDTO("USD", date, "success", rates);
+        RateDTO expected = new RateDTO(EnumCurrency.USD, date, "success", rates);
 
-        RateDTO actual = rateService.calculateRates("USD", List.of("TRY", "EUR", "USD"), date);
+        RateDTO actual = rateService.calculateRates(EnumCurrency.USD, List.of(EnumCurrency.USD,EnumCurrency.TRY,EnumCurrency.EUR), date);
 
-        Assertions.assertThat(actual).isEqualTo(expected);
+        Assertions.assertThat(actual)
+                .usingRecursiveComparison()
+                .ignoringCollectionOrder()
+                .isEqualTo(expected);
     }
 }

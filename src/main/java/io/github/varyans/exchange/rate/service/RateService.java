@@ -1,6 +1,7 @@
 package io.github.varyans.exchange.rate.service;
 
 import io.github.varyans.exchange.rate.entity.RateEntity;
+import io.github.varyans.exchange.rate.enumaration.EnumCurrency;
 import io.github.varyans.exchange.rate.repository.RateRepository;
 import org.springframework.stereotype.Service;
 
@@ -23,20 +24,20 @@ public class RateService {
     }
 
 
-    public RateDTO calculateRates(String base, List<String> targets,LocalDate date) {
+    public RateDTO calculateRates(EnumCurrency base, List<EnumCurrency> targets,LocalDate date) {
         Optional<RateEntity> oneByDate = repository.findOneByDate(date);
 
         RateEntity rateEntity = oneByDate.orElseThrow();
-        Map<String, Double> rates = rateEntity.getRates();
+        Map<EnumCurrency, Double> rates = rateEntity.getRates();
 
         BigDecimal baseCurrencyRate = BigDecimal.valueOf(rates.get(base));
 
-        Function<Map.Entry<String, Double>, Rate> entryToRate = entry
+        Function<Map.Entry<EnumCurrency, Double>, Rate> entryToRate = entry
                 -> new Rate(
                         entry.getKey(),
                 BigDecimal.valueOf(entry.getValue()).divide(baseCurrencyRate,5,RoundingMode.CEILING).doubleValue());
 
-        Predicate<Map.Entry<String, Double>> targetFilter = entry -> targets.contains(entry.getKey());
+        Predicate<Map.Entry<EnumCurrency, Double>> targetFilter = entry -> targets.contains(entry.getKey());
 
         List<Rate> rateList = rates.entrySet()
                 .stream()
@@ -48,11 +49,11 @@ public class RateService {
     }
 
 
-    public RateDTO calculateRates(String base, List<String> targets) {
+    public RateDTO calculateRates(EnumCurrency base, List<EnumCurrency> targets) {
         LocalDate date = LocalDate.now();
         return calculateRates(base, targets,date);
     }
 }
 
-record RateDTO(String base,LocalDate date, String message, List<Rate> rates) {}
-record Rate(String currency, Double rate) {}
+record RateDTO(EnumCurrency base,LocalDate date, String message, List<Rate> rates) {}
+record Rate(EnumCurrency currency, Double rate) {}
