@@ -50,7 +50,7 @@ class RateControllerTest {
 
     @Test
     void validCurrencyInSourceInLowerCase_ShouldReturn_Success() throws Exception {
-        when(rateService.calculateRates(EnumCurrency.TRY, List.of(EnumCurrency.USD,EnumCurrency.EUR)))
+        when(rateService.calculateRates(EnumCurrency.TRY, List.of(EnumCurrency.USD,EnumCurrency.EUR),null))
                 .thenReturn(new RateDTO(EnumCurrency.TRY, LocalDate.now(),"", Collections.emptyList()));
 
         mockMvc.perform(get("/rates")

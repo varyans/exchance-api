@@ -100,6 +100,6 @@ class RateServiceTest {
     void dateNotSet_setCurrentDate_throwRatesNotFound() {
         Assertions
                 .assertThatExceptionOfType(RatesNotFound.class)
-                .isThrownBy(() -> rateService.calculateRates(EnumCurrency.USD, List.of(EnumCurrency.USD,EnumCurrency.TRY,EnumCurrency.EUR)));
+                .isThrownBy(() -> rateService.calculateRates(EnumCurrency.USD, List.of(EnumCurrency.USD,EnumCurrency.TRY,EnumCurrency.EUR),null));
     }
 }

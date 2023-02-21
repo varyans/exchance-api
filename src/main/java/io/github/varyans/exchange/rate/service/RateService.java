@@ -1,5 +1,8 @@
 package io.github.varyans.exchange.rate.service;
 
+import io.github.varyans.exchange.rate.adaptor.RateAdaptor;
+import io.github.varyans.exchange.rate.adaptor.RateResponse;
+import io.github.varyans.exchange.rate.adaptor.RateResponseConverter;
 import io.github.varyans.exchange.rate.entity.RateEntity;
 import io.github.varyans.exchange.rate.enumaration.EnumCurrency;
 import io.github.varyans.exchange.rate.exceptions.RatesNotFound;
@@ -23,9 +26,30 @@ public class RateService {
 
     private final RateRepository repository;
 
-    public RateService(RateRepository repository) {
+    private final RateAdaptor rateAdaptor;
+
+    private final RateResponseConverter rateResponseConverter;
+
+    public RateService(RateRepository repository, RateAdaptor rateAdaptor, RateResponseConverter rateResponseConverter) {
         this.repository = repository;
+        this.rateAdaptor = rateAdaptor;
+        this.rateResponseConverter = rateResponseConverter;
     }
+
+    public RateDTO calculateRates() {
+        return calculateRates(null);
+    }
+
+
+    public RateDTO calculateRates(EnumCurrency base) {
+        return calculateRates(base, null);
+    }
+
+
+    public RateDTO calculateRates(EnumCurrency base, List<EnumCurrency> targets) {
+        return calculateRates(base, targets, null);
+    }
+
     //TODO: Add Cache
     public RateDTO calculateRates(EnumCurrency base, List<EnumCurrency> targets, LocalDate date) {
         EnumCurrency baseCurrency = Optional.ofNullable(base).orElse(EnumCurrency.EUR);
@@ -33,10 +57,16 @@ public class RateService {
         List<EnumCurrency> targetsCurr = Optional.ofNullable(targets)
                 .orElse(enumCurrencies);
         List<EnumCurrency> targetsCurrency = targetsCurr.isEmpty()?enumCurrencies:targetsCurr;
+        LocalDate rateDate = Optional.ofNullable(date).orElse(LocalDate.now());
 
-        Optional<RateEntity> oneByDate = repository.findOneByDate(date);
+        RateEntity rateEntity = repository.findOneByDate(rateDate)
+                .orElseGet(() -> {
+                    RateResponse rates = rateAdaptor.getRates();
+                    RateEntity entity = rateResponseConverter.convert(rates);
+                    return repository.saveAndFlush(entity);
+                });
 
-        RateEntity rateEntity = oneByDate.orElseThrow(RatesNotFound::new);
+//        RateEntity rateEntity = oneByDate.orElseThrow(RatesNotFound::new);
         Map<EnumCurrency, Double> rates = rateEntity.getRates();
 
         BigDecimal baseCurrencyRate = BigDecimal.valueOf(rates.get(baseCurrency));
@@ -54,13 +84,7 @@ public class RateService {
                 .map(entryToRate)
                 .toList();
 
-        return new RateDTO(baseCurrency,date,"success",rateList);
-    }
-
-
-    public RateDTO calculateRates(EnumCurrency base, List<EnumCurrency> targets) {
-        LocalDate date = LocalDate.now();
-        return calculateRates(base, targets,date);
+        return new RateDTO(baseCurrency,rateDate,"success",rateList);
     }
 }
 
