@@ -1,4 +1,5 @@
 package io.github.varyans.exchange.rate.model;
 
-public class Rate {
-}
+import io.github.varyans.exchange.rate.enumaration.EnumCurrency;
+
+public record Rate(EnumCurrency currency, Double rate) {}
