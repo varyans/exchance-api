@@ -2,6 +2,7 @@ package io.github.varyans.exchange.rate.service;
 
 import io.github.varyans.exchange.rate.entity.RateEntity;
 import io.github.varyans.exchange.rate.enumaration.EnumCurrency;
+import io.github.varyans.exchange.rate.exceptions.RatesNotFound;
 import io.github.varyans.exchange.rate.repository.RateRepository;
 import org.springframework.stereotype.Service;
 
@@ -22,12 +23,11 @@ public class RateService {
     public RateService(RateRepository repository) {
         this.repository = repository;
     }
-
-
+    //TODO: Add Cache
     public RateDTO calculateRates(EnumCurrency base, List<EnumCurrency> targets,LocalDate date) {
         Optional<RateEntity> oneByDate = repository.findOneByDate(date);
 
-        RateEntity rateEntity = oneByDate.orElseThrow();
+        RateEntity rateEntity = oneByDate.orElseThrow(RatesNotFound::new);
         Map<EnumCurrency, Double> rates = rateEntity.getRates();
 
         BigDecimal baseCurrencyRate = BigDecimal.valueOf(rates.get(base));
