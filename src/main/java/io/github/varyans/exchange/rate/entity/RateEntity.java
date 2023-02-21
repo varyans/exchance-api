@@ -3,6 +3,7 @@ package io.github.varyans.exchange.rate.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.Map;
 
@@ -11,7 +12,11 @@ import java.util.Map;
 @Getter
 @Setter
 @EqualsAndHashCode
-public class RateEntity {
+@Table(name = "RateEntity", indexes = {
+        @Index(name = "idx_rateentity_date", columnList = "date")
+})
+@Data
+public class RateEntity implements Serializable {
     @Id
     @GeneratedValue
     private Long id;

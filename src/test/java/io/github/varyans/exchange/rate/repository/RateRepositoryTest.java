@@ -4,11 +4,11 @@ import io.github.varyans.exchange.rate.adaptor.RateAdaptor;
 import io.github.varyans.exchange.rate.adaptor.RateResponse;
 import io.github.varyans.exchange.rate.adaptor.RateResponseConverter;
 import io.github.varyans.exchange.rate.entity.RateEntity;
+import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.util.Objects;
 import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest
 class RateRepositoryTest {
@@ -26,8 +26,7 @@ class RateRepositoryTest {
     void dataRetieved_saveToDb() {
         RateResponse rates = rateAdaptor.getRates();
         RateEntity expected = rateResponseConverter.convert(rates);
-        Objects.requireNonNull(expected);
-        RateEntity actual = rateRepository.save(expected);
+        RateEntity actual = rateRepository.saveAndFlush(expected);
 
         assertThat(actual.getId()).isNotNull();
         assertThat(actual).usingRecursiveComparison()
