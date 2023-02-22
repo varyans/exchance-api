@@ -1,5 +1,6 @@
 package io.github.varyans.exchange.exchange.resource;
 
+import io.github.varyans.exchange.exchange.entity.ExchangeEntity;
 import io.github.varyans.exchange.exchange.service.ExchangeService;
 import io.github.varyans.exchange.rate.enumaration.EnumCurrency;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,9 +21,9 @@ public class ExchangeController {
     }
 
     @GetMapping
-    public Object getRates(@RequestParam(name = "base",required = false) EnumCurrency base,
-                            @RequestParam(name = "target",required = false) List<EnumCurrency> target,
-                            @RequestParam(name = "amount")  Double amount) {
+    public ExchangeEntity getRates(@RequestParam(name = "base",required = false) EnumCurrency base,
+                                   @RequestParam(name = "target",required = false) List<EnumCurrency> target,
+                                   @RequestParam(name = "amount")  Double amount) {
         return exchangeService.calculateExchangeRate(amount,base, target);
     }
 }

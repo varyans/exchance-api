@@ -28,7 +28,7 @@ public class ExchangeService {
         this.exchangeRepository = exchangeRepository;
     }
 
-    public Object calculateExchangeRate(Double amount,EnumCurrency base, List<EnumCurrency> targets) {
+    public ExchangeEntity calculateExchangeRate(Double amount,EnumCurrency base, List<EnumCurrency> targets) {
         RateDTO rateDTO = rateService.calculateRates(base,targets);
 
 
@@ -38,7 +38,7 @@ public class ExchangeService {
                 .collect(Collectors.toMap(Rate::currency,Rate::rate));
 
         ExchangeEntity exchangeEntity = new ExchangeEntity();
-        exchangeEntity.setBase(base);
+        exchangeEntity.setBase(rateDTO.base());
         exchangeEntity.setAmount(amount);
         exchangeEntity.setDate(LocalDate.now());
         exchangeEntity.setRates(exchange);
