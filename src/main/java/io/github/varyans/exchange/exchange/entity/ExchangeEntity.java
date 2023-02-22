@@ -26,6 +26,8 @@ public class ExchangeEntity {
 
     @Enumerated(EnumType.STRING)
     private EnumCurrency base;
+
+    private Double amount;
     private LocalDate date;
 
     @ElementCollection
