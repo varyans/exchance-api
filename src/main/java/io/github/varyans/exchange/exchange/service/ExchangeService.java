@@ -3,6 +3,7 @@ package io.github.varyans.exchange.exchange.service;
 import io.github.varyans.exchange.exchange.entity.ExchangeEntity;
 import io.github.varyans.exchange.exchange.repository.ExchangeRepository;
 import io.github.varyans.exchange.rate.enumaration.EnumCurrency;
+import io.github.varyans.exchange.rate.exceptions.RatesNotFound;
 import io.github.varyans.exchange.rate.model.Rate;
 import io.github.varyans.exchange.rate.resource.dto.RateDTO;
 import io.github.varyans.exchange.rate.service.RateService;
@@ -46,5 +47,13 @@ public class ExchangeService {
         ExchangeEntity saved = exchangeRepository.saveAndFlush(exchangeEntity);
 
         return saved;
+    }
+
+    public ExchangeEntity getConversion(Long id) {
+        return exchangeRepository.findById(id).orElseThrow(RatesNotFound::new);
+    }
+
+    public List<ExchangeEntity> getConversionList(LocalDate startDate, LocalDate endDate) {
+        return exchangeRepository.findByDateBetween(startDate, endDate);
     }
 }

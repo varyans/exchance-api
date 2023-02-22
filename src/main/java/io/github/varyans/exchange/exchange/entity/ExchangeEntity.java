@@ -2,27 +2,23 @@ package io.github.varyans.exchange.exchange.entity;
 
 import io.github.varyans.exchange.rate.enumaration.EnumCurrency;
 import jakarta.persistence.*;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.Map;
 import java.util.UUID;
 
 @Entity
 @NoArgsConstructor
-@Getter
-@Setter
-@EqualsAndHashCode
 @Table(name = "ExchangeEntity", indexes = {
         @Index(name = "idx_exchange_date", columnList = "date")
 })
-public class ExchangeEntity {
+@Data
+public class ExchangeEntity implements Serializable {
     @Id
     @GeneratedValue
-    private UUID id;
+    private Long id;
 
     @Enumerated(EnumType.STRING)
     private EnumCurrency base;
